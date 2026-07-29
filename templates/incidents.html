@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Incidents - BYTE ME Blue Team Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <div>
+        <h2 class="mb-1">Incident Management</h2>
+        <p class="text-secondary mb-0">Track, triage, and prioritize active security incidents.</p>
+    </div>
+    <a href="{% url 'incident_create' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Create Incident</a>
+</div>
+
+<!-- Search and Filter Bar -->
+<div class="custom-card card mb-4">
+    <div class="card-body p-3">
+        <form method="get" action="{% url 'incidents' %}" class="row g-3 align-items-end">
+            <!-- Search -->
+            <div class="col-md-3">
+                <label class="form-label small mb-1">Search</label>
+                <input type="text" name="q" class="form-control" placeholder="Search ID, Title, Desc..." value="{{ search_query }}">
+            </div>
+            <!-- Severity -->
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Severity</label>
+                <select name="severity" class="form-select">
+                    <option value="">All</option>
+                    {% for val, display in severity_choices %}
+                    <option value="{{ val }}" {% if current_severity == val %}selected{% endif %}>{{ display }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Status -->
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All</option>
+                    {% for val, display in status_choices %}
+                    <option value="{{ val }}" {% if current_status == val %}selected{% endif %}>{{ display }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Category -->
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Category</label>
+                <select name="category" class="form-select">
+                    <option value="">All</option>
+                    {% for val, display in category_choices %}
+                    <option value="{{ val }}" {% if current_category == val %}selected{% endif %}>{{ display }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Assigned Analyst -->
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Assigned To</label>
+                <select name="assigned_to" class="form-select">
+                    <option value="">All</option>
+                    <option value="unassigned" {% if current_assigned_to == 'unassigned' %}selected{% endif %}>Unassigned</option>
+                    {% for analyst in analysts %}
+                    <option value="{{ analyst.id }}" {% if current_assigned_to == analyst.id|stringformat:"s" %}selected{% endif %}>{{ analyst.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Actions -->
+            <div class="col-md-1 d-flex">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Sorting Options (Standalone form to preserve filters conceptually or combined) -->
+<div class="d-flex justify-content-end mb-3">
+    <form method="get" action="{% url 'incidents' %}" class="d-flex align-items-center">
+        <!-- Preserve existing GET parameters -->
+        {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
+        {% if current_severity %}<input type="hidden" name="severity" value="{{ current_severity }}">{% endif %}
+        {% if current_status %}<input type="hidden" name="status" value="{{ current_status }}">{% endif %}
+        {% if current_category %}<input type="hidden" name="category" value="{{ current_category }}">{% endif %}
+        {% if current_assigned_to %}<input type="hidden" name="assigned_to" value="{{ current_assigned_to }}">{% endif %}
+        
+        <label class="small me-2 text-nowrap text-muted">Sort By:</label>
+        <select name="sort" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+            <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+            <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+            <option value="severity" {% if current_sort == 'severity' %}selected{% endif %}>Severity</option>
+            <option value="status" {% if current_sort == 'status' %}selected{% endif %}>Status</option>
+        </select>
+    </form>
+</div>
+
+<!-- Incident List -->
+<div class="custom-card card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Severity</th>
+                        <th>Status</th>
+                        <th>Assigned</th>
+                        <th>Created Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for incident in incidents %}
+                    <tr>
+                        <td><strong><a href="{% url 'incident_detail' incident.incident_id %}" class="text-decoration-none fw-semibold">{{ incident.incident_id }}</a></strong></td>
+                        <td class="fw-semibold">{{ incident.title }}</td>
+                        <td>{{ incident.category }}</td>
+                        <td>
+                            {% if incident.severity == 'Low' %}
+                                <span class="badge bg-secondary">Low</span>
+                            {% elif incident.severity == 'Medium' %}
+                                <span class="badge bg-warning text-dark">Medium</span>
+                            {% elif incident.severity == 'High' %}
+                                <span class="badge bg-danger">High</span>
+                            {% elif incident.severity == 'Critical' %}
+                                <span class="badge bg-dark">Critical</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ incident.severity }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if incident.status == 'Open' %}
+                                <span class="badge bg-danger">Open</span>
+                            {% elif incident.status == 'In Progress' %}
+                                <span class="badge bg-warning text-dark">In Progress</span>
+                            {% elif incident.status == 'Closed' %}
+                                <span class="badge bg-success">Closed</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ incident.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ incident.assigned_to.username|default:"Unassigned" }}</td>
+                        <td>{{ incident.created_at|date:"M d, Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'incident_detail' incident.incident_id %}" class="btn btn-sm btn-outline-primary me-1">View</a>
+                            <a href="{% url 'incident_update' incident.incident_id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            {% if search_query or current_severity or current_status or current_category or current_assigned_to %}
+                            <h5 class="text-muted">No matches found.</h5>
+                            <p class="mb-0 text-muted">Try adjusting your filters or search query.</p>
+                            <a href="{% url 'incidents' %}" class="btn btn-sm btn-outline-primary mt-3">Clear Filters</a>
+                            {% else %}
+                            <h5 class="text-muted">No incidents available.</h5>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="d-flex justify-content-between align-items-center mt-4">
+    <div class="small text-muted">
+        Showing Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </div>
+    <nav aria-label="Incident pagination">
+        <ul class="pagination pagination-sm mb-0">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode|cut:'page='|cut:page_obj.number }}{% endif %}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+            
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">{{ page_obj.number }}</span>
+            </li>
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode|cut:'page='|cut:page_obj.number }}{% endif %}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}
+
+{% endblock %}

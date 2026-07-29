@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile - {{ request.user.username }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h2>User Profile</h2>
+    <div class="mt-2 mt-md-0">
+        <a href="{% url 'profile_update' %}" class="btn btn-primary"><i class="bi bi-pencil-square me-1"></i> Edit Profile</a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Left Column: Avatar & Core Identity -->
+    <div class="col-lg-4 mb-4">
+        <div class="custom-card card shadow-sm h-100">
+            <div class="card-body text-center p-4">
+                <div class="mb-4">
+                    {% if profile and profile.profile_image %}
+                        <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="rounded-circle img-thumbnail bg-dark border-secondary" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="rounded-circle bg-secondary d-inline-flex justify-content-center align-items-center text-white" style="width: 150px; height: 150px; font-size: 4rem;">
+                            {{ request.user.username|make_list|first|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+                <h4 class="mb-1">{{ request.user.first_name }} {{ request.user.last_name }}</h4>
+                <p class="text-muted mb-2">@{{ request.user.username }}</p>
+                
+                {% if profile %}
+                <span class="badge {% if profile.employment_status == 'Active' %}bg-success{% else %}bg-secondary{% endif %} mb-3 px-3 py-2 rounded-pill">
+                    {{ profile.employment_status }}
+                </span>
+                {% endif %}
+            </div>
+            
+            {% if profile %}
+            <div class="card-footer bg-transparent border-top border-secondary border-opacity-25 p-4">
+                <ul class="list-unstyled mb-0 small">
+                    <li class="mb-3 d-flex justify-content-between">
+                        <span class="text-muted">Security Clearance:</span>
+                        <span class="fw-bold text-{% if profile.security_clearance == 'Critical' %}danger{% elif profile.security_clearance == 'High' %}warning{% else %}info{% endif %}">{{ profile.security_clearance }}</span>
+                    </li>
+                    <li class="mb-3 d-flex justify-content-between">
+                        <span class="text-muted">Employee ID:</span>
+                        <span>{{ profile.employee_id }}</span>
+                    </li>
+                    <li class="d-flex justify-content-between">
+                        <span class="text-muted">Joined:</span>
+                        <span>{{ request.user.date_joined|date:"M Y" }}</span>
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Right Column: Details -->
+    <div class="col-lg-8 mb-4">
+        <div class="custom-card card shadow-sm mb-4">
+            <div class="card-header bg-transparent border-bottom">
+                <h5 class="mb-0 text-info"><i class="bi bi-person-lines-fill me-2"></i>Contact Information</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-sm-3 text-muted mb-1 mb-sm-0">Email</div>
+                    <div class="col-sm-9">{{ request.user.email|default:"Not provided" }}</div>
+                </div>
+                <hr class="border-secondary border-opacity-25">
+                <div class="row">
+                    <div class="col-sm-3 text-muted mb-1 mb-sm-0">Phone</div>
+                    <div class="col-sm-9">{{ profile.phone_number|default:"Not provided" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="custom-card card shadow-sm">
+            <div class="card-header bg-transparent border-bottom">
+                <h5 class="mb-0 text-warning"><i class="bi bi-building me-2"></i>Employment Details</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-3">
+                    <div class="col-sm-6">
+                        <p class="text-muted small mb-1 text-uppercase fw-bold">Department</p>
+                        <p>{{ profile.department|default:"-" }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="text-muted small mb-1 text-uppercase fw-bold">Designation</p>
+                        <p>{{ profile.designation|default:"-" }}</p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-6">
+                        <p class="text-muted small mb-1 text-uppercase fw-bold">Office Location</p>
+                        <p>{{ profile.office_location|default:"-" }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="text-muted small mb-1 text-uppercase fw-bold">Extension</p>
+                        <p>{{ profile.extension_number|default:"-" }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="text-muted small mb-1 text-uppercase fw-bold">Standard Shift</p>
+                        <p>{{ profile.shift|default:"-" }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="text-muted small mb-1 text-uppercase fw-bold">Last Login</p>
+                        <p>{{ request.user.last_login|date:"M d, Y H:i"|default:"Never" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

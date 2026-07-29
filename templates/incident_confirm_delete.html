@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Delete - {{ incident.incident_id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="custom-card card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Deletion</h5>
+            </div>
+            <div class="card-body text-center py-5">
+                <h4 class="mb-3">Are you absolutely sure?</h4>
+                <p class="text-muted mb-4">You are about to permanently delete the following incident:</p>
+                
+                <div class="bg-dark p-3 rounded mb-4 text-start">
+                    <p class="mb-1"><strong>ID:</strong> {{ incident.incident_id }}</p>
+                    <p class="mb-1"><strong>Title:</strong> {{ incident.title }}</p>
+                    <p class="mb-0"><strong>Status:</strong> {{ incident.status }}</p>
+                </div>
+                
+                <p class="text-danger small mb-4">This action cannot be undone. All associated timeline events and attachments will also be destroyed.</p>
+                
+                <form method="post" action="{% url 'incident_delete' incident.incident_id %}">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{% url 'incident_detail' incident.incident_id %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-danger">Yes, Delete Incident</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

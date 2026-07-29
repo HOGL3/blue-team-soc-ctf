@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}{% if incident %}Update Incident - {{ incident.incident_id }}{% else %}Create Incident{% endif %}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{% if incident %}Update Incident: {{ incident.incident_id }}{% else %}Create Incident{% endif %}</h2>
+    {% if incident %}
+    <a href="{% url 'incident_detail' incident.incident_id %}" class="btn btn-secondary">Cancel</a>
+    {% else %}
+    <a href="{% url 'incidents' %}" class="btn btn-secondary">Cancel</a>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="custom-card card">
+            <div class="card-body">
+                <form method="post" action="{% if incident %}{% url 'incident_update' incident.incident_id %}{% else %}{% url 'incident_create' %}{% endif %}" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ field.errors.as_text }}
+                        </div>
+                        {% endif %}
+                        {% if field.help_text %}
+                        <div class="form-text text-secondary">{{ field.help_text }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="btn btn-primary mt-3">{% if incident %}Save Changes{% else %}Create Incident{% endif %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="custom-card card">
+            <div class="card-header bg-transparent border-bottom">
+                <h5 class="mb-0">Incident Info</h5>
+            </div>
+            <div class="card-body">
+                {% if incident %}
+                <p class="mb-2 text-secondary"><strong>Title:</strong> {{ incident.title }}</p>
+                <p class="mb-2 text-secondary"><strong>Category:</strong> {{ incident.category }}</p>
+                {% else %}
+                <p class="mb-0 text-secondary small">Create a new incident and assign it to the right analyst. A timeline event will be added when you update it later.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

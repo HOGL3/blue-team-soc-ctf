@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Incident Detail - BYTE ME Blue Team Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h2>{{ incident.incident_id }}: {{ incident.title }}</h2>
+    <div class="mt-2 mt-md-0">
+        <a href="{% url 'incident_update' incident.incident_id %}" class="btn btn-outline-primary me-2">Update Incident</a>
+        <a href="{% url 'incident_delete' incident.incident_id %}" class="btn btn-outline-danger">Delete</a>
+        <a href="{% url 'incidents' %}" class="btn btn-secondary ms-2">Back to List</a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <div class="custom-card card mb-4">
+            <div class="card-header bg-transparent border-bottom">
+                <h5 class="mb-0">Incident Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6 class="text-muted small mb-2">Description</h6>
+                    <p class="mb-0">{{ incident.description|linebreaks }}</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted small mb-1">Source</h6>
+                        <p class="mb-0">{{ incident.source }}</p>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted small mb-1">Category</h6>
+                        <p class="mb-0">{{ incident.category }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="custom-card card mb-4">
+            <div class="card-header bg-transparent border-bottom">
+                <h5 class="mb-0">Timeline</h5>
+            </div>
+            <div class="card-body">
+                {% if incident.timeline_events.all %}
+                <ul class="list-unstyled mb-0">
+                    {% for event in incident.timeline_events.all %}
+                    <li class="mb-3 pb-3 border-bottom border-light">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ event.event }}</strong>
+                            <span class="text-muted small">{{ event.timestamp|date:"M d, Y H:i:s" }}</span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted mb-0">No timeline events recorded yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <div class="custom-card card mb-4">
+            <div class="card-header bg-transparent border-bottom">
+                <h5 class="mb-0">Metadata</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-3">
+                        <h6 class="text-muted small mb-1">Status</h6>
+                        {% if incident.status == 'Open' %}
+                            <span class="badge bg-danger">{{ incident.status }}</span>
+                        {% elif incident.status == 'In Progress' %}
+                            <span class="badge bg-warning text-dark">{{ incident.status }}</span>
+                        {% elif incident.status == 'Closed' %}
+                            <span class="badge bg-success">{{ incident.status }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ incident.status }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="mb-3">
+                        <h6 class="text-muted small mb-1">Severity</h6>
+                        {% if incident.severity == 'Low' %}
+                            <span class="badge bg-secondary">{{ incident.severity }}</span>
+                        {% elif incident.severity == 'Medium' %}
+                            <span class="badge bg-warning text-dark">{{ incident.severity }}</span>
+                        {% elif incident.severity == 'High' %}
+                            <span class="badge bg-danger">{{ incident.severity }}</span>
+                        {% elif incident.severity == 'Critical' %}
+                            <span class="badge bg-dark">{{ incident.severity }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ incident.severity }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="mb-3">
+                        <h6 class="text-muted small mb-1">Assigned Analyst</h6>
+                        <p class="mb-0">{{ incident.assigned_to.username|default:"Unassigned" }}</p>
+                    </li>
+                    <li class="mb-3">
+                        <h6 class="text-muted small mb-1">Created By</h6>
+                        <p class="mb-0">{{ incident.created_by.username }}</p>
+                    </li>
+                    <li class="mb-3">
+                        <h6 class="text-muted small mb-1">Created Date</h6>
+                        <p class="mb-0">{{ incident.created_at|date:"M d, Y H:i" }}</p>
+                    </li>
+                    <li class="mb-3">
+                        <h6 class="text-muted small mb-1">Last Updated</h6>
+                        <p class="mb-0">{{ incident.updated_at|date:"M d, Y H:i" }}</p>
+                    </li>
+                    {% if incident.resolved_at %}
+                    <li class="mb-3">
+                        <h6 class="text-muted small mb-1">Resolution Date</h6>
+                        <p class="mb-0">{{ incident.resolved_at|date:"M d, Y H:i" }}</p>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="custom-card card mb-4">
+            <div class="card-header bg-transparent border-bottom">
+                <h5 class="mb-0">Attachments</h5>
+            </div>
+            <div class="card-body">
+                {% if incident.attachments.all %}
+                <ul class="list-unstyled mb-0">
+                    {% for attachment in incident.attachments.all %}
+                    <li class="mb-2">
+                        <a href="{{ attachment.file.url }}" class="text-decoration-none" target="_blank">
+                            <i class="bi bi-paperclip me-1"></i> Attachment {{ forloop.counter }}
+                        </a>
+                        <div class="text-muted small">Uploaded by {{ attachment.uploaded_by.username }} on {{ attachment.uploaded_at|date:"M d, Y" }}</div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted mb-0">No attachments found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

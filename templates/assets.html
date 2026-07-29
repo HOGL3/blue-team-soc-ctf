@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Asset Management - BYTE ME Blue Team Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <div>
+        <h2 class="mb-1">Asset Management</h2>
+        <p class="text-secondary mb-0">Maintain visibility into critical assets and their current state.</p>
+    </div>
+    <div class="mt-2 mt-md-0">
+        <a href="{% url 'asset_create' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Create Asset</a>
+    </div>
+</div>
+
+<!-- Search and Filter Bar -->
+<div class="custom-card card mb-4">
+    <div class="card-body">
+        <form method="get" action="{% url 'assets' %}" class="row g-3 align-items-end">
+            <!-- Search -->
+            <div class="col-md-3">
+                <label class="form-label small mb-1">Search</label>
+                <input type="text" name="q" class="form-control" placeholder="Name, Hostname, IP, OS, Owner..." value="{{ search_query }}">
+            </div>
+            <!-- Type -->
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Type</label>
+                <select name="asset_type" class="form-select">
+                    <option value="">All</option>
+                    {% for val, display in type_choices %}
+                    <option value="{{ val }}" {% if current_type == val %}selected{% endif %}>{{ display }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Criticality -->
+            <div class="col-md-1">
+                <label class="form-label small mb-1">Criticality</label>
+                <select name="criticality" class="form-select">
+                    <option value="">All</option>
+                    {% for val, display in criticality_choices %}
+                    <option value="{{ val }}" {% if current_criticality == val %}selected{% endif %}>{{ display }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Status -->
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All</option>
+                    {% for val, display in status_choices %}
+                    <option value="{{ val }}" {% if current_status == val %}selected{% endif %}>{{ display }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- OS -->
+            <div class="col-md-1">
+                <label class="form-label small mb-1">OS</label>
+                <select name="operating_system" class="form-select">
+                    <option value="">All</option>
+                    {% for os in os_choices %}
+                    <option value="{{ os }}" {% if current_os == os %}selected{% endif %}>{{ os }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Owner -->
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Owner</label>
+                <select name="owner" class="form-select">
+                    <option value="">All</option>
+                    <option value="unassigned" {% if current_owner == 'unassigned' %}selected{% endif %}>Unassigned</option>
+                    {% for owner in owners %}
+                    <option value="{{ owner.id }}" {% if current_owner == owner.id|stringformat:"s" %}selected{% endif %}>{{ owner.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Actions -->
+            <div class="col-md-1 d-flex">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Sorting -->
+<div class="d-flex justify-content-end mb-3">
+    <form method="get" action="{% url 'assets' %}" class="d-flex align-items-center">
+        <!-- Preserve existing GET parameters -->
+        {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
+        {% if current_type %}<input type="hidden" name="asset_type" value="{{ current_type }}">{% endif %}
+        {% if current_criticality %}<input type="hidden" name="criticality" value="{{ current_criticality }}">{% endif %}
+        {% if current_status %}<input type="hidden" name="status" value="{{ current_status }}">{% endif %}
+        {% if current_os %}<input type="hidden" name="operating_system" value="{{ current_os }}">{% endif %}
+        {% if current_owner %}<input type="hidden" name="owner" value="{{ current_owner }}">{% endif %}
+        
+        <label class="small me-2 text-nowrap text-muted">Sort By:</label>
+        <select name="sort" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+            <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+            <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+            <option value="name" {% if current_sort == 'name' %}selected{% endif %}>Asset Name</option>
+            <option value="criticality" {% if current_sort == 'criticality' %}selected{% endif %}>Criticality</option>
+            <option value="status" {% if current_sort == 'status' %}selected{% endif %}>Status</option>
+        </select>
+    </form>
+</div>
+
+<!-- Asset List -->
+<div class="custom-card card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Asset Name</th>
+                        <th>Hostname</th>
+                        <th>Type</th>
+                        <th>IP Address</th>
+                        <th>OS</th>
+                        <th>Owner</th>
+                        <th>Criticality</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asset in assets %}
+                    <tr>
+                        <td><strong><a href="{% url 'asset_detail' asset.pk %}" class="text-decoration-none fw-semibold">{{ asset.asset_name }}</a></strong></td>
+                        <td>{{ asset.hostname|default:"-" }}</td>
+                        <td>{{ asset.asset_type }}</td>
+                        <td>{{ asset.ip_address|default:"-" }}</td>
+                        <td>{{ asset.operating_system|default:"-" }}</td>
+                        <td>{{ asset.owner.username|default:"Unassigned" }}</td>
+                        <td>
+                            {% if asset.criticality == 'Low' %}
+                                <span class="badge bg-secondary">Low</span>
+                            {% elif asset.criticality == 'Medium' %}
+                                <span class="badge bg-warning text-dark">Medium</span>
+                            {% elif asset.criticality == 'High' %}
+                                <span class="badge bg-danger">High</span>
+                            {% elif asset.criticality == 'Critical' %}
+                                <span class="badge bg-dark">Critical</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ asset.criticality }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if asset.status == 'Active' %}
+                                <span class="badge bg-success">Active</span>
+                            {% elif asset.status == 'Offline' %}
+                                <span class="badge bg-danger">Offline</span>
+                            {% elif asset.status == 'Maintenance' %}
+                                <span class="badge bg-warning text-dark">Maintenance</span>
+                            {% elif asset.status == 'Retired' %}
+                                <span class="badge bg-secondary">Retired</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ asset.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'asset_detail' asset.pk %}" class="btn btn-sm btn-outline-primary py-0 px-2 me-1">View</a>
+                            <a href="{% url 'asset_update' asset.pk %}" class="btn btn-sm btn-outline-secondary py-0 px-2">Edit</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center py-5">
+                            {% if search_query or current_type or current_criticality or current_status or current_os or current_owner %}
+                            <h5 class="text-muted">No matches found.</h5>
+                            <p class="text-muted mb-0">Try adjusting your filters or search query.</p>
+                            <a href="{% url 'assets' %}" class="btn btn-sm btn-outline-primary mt-3">Clear Filters</a>
+                            {% else %}
+                            <h5 class="text-muted">No assets found.</h5>
+                            <p class="text-muted mb-0">Click "Create Asset" to add one.</p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="d-flex justify-content-between align-items-center mt-4">
+    <div class="text-muted small">
+        Showing Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </div>
+    <nav aria-label="Asset pagination">
+        <ul class="pagination pagination-sm mb-0">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode|cut:'page='|cut:page_obj.number }}{% endif %}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+            
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">{{ page_obj.number }}</span>
+            </li>
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode|cut:'page='|cut:page_obj.number }}{% endif %}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}
+
+{% endblock %}

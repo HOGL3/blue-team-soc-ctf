@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Asset Details - {{ asset.asset_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h2>{{ asset.asset_name }}</h2>
+    <div class="mt-2 mt-md-0">
+        <a href="{% url 'asset_update' asset.pk %}" class="btn btn-outline-primary me-2">Edit Asset</a>
+        <a href="{% url 'asset_delete' asset.pk %}" class="btn btn-outline-danger">Delete</a>
+        <a href="{% url 'assets' %}" class="btn btn-secondary ms-2">Back to List</a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Main Asset Information -->
+    <div class="col-lg-8">
+        <div class="custom-card card mb-4">
+            <div class="card-header bg-transparent border-bottom">
+                <h5 class="mb-0">Technical Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted small mb-1">Asset Name</h6>
+                        <p class="mb-0 fs-5">{{ asset.asset_name }}</p>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted small mb-1">Hostname</h6>
+                        <p class="mb-0 fs-5">{{ asset.hostname|default:"-" }}</p>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted small mb-1">Asset Type</h6>
+                        <p class="mb-0">{{ asset.asset_type }}</p>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted small mb-1">Operating System</h6>
+                        <p class="mb-0">{{ asset.operating_system|default:"-" }}</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted small mb-1">IP Address</h6>
+                        <p class="mb-0 font-monospace">{{ asset.ip_address|default:"-" }}</p>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted small mb-1">MAC Address</h6>
+                        <p class="mb-0 font-monospace">{{ asset.mac_address|default:"-" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar Metadata -->
+    <div class="col-lg-4">
+        <div class="custom-card card mb-4">
+            <div class="card-header bg-transparent border-bottom">
+                <h5 class="mb-0">Administrative</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-4">
+                        <h6 class="text-muted small mb-1">Status</h6>
+                        {% if asset.status == 'Active' %}
+                            <span class="badge bg-success fs-6">{{ asset.status }}</span>
+                        {% elif asset.status == 'Offline' %}
+                            <span class="badge bg-danger fs-6">{{ asset.status }}</span>
+                        {% elif asset.status == 'Maintenance' %}
+                            <span class="badge bg-warning text-dark fs-6">{{ asset.status }}</span>
+                        {% elif asset.status == 'Retired' %}
+                            <span class="badge bg-secondary fs-6">{{ asset.status }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">{{ asset.status }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="mb-4">
+                        <h6 class="text-muted small mb-1">Criticality</h6>
+                        {% if asset.criticality == 'Low' %}
+                            <span class="badge bg-secondary fs-6">{{ asset.criticality }}</span>
+                        {% elif asset.criticality == 'Medium' %}
+                            <span class="badge bg-warning text-dark fs-6">{{ asset.criticality }}</span>
+                        {% elif asset.criticality == 'High' %}
+                            <span class="badge bg-danger fs-6">{{ asset.criticality }}</span>
+                        {% elif asset.criticality == 'Critical' %}
+                            <span class="badge bg-dark fs-6">{{ asset.criticality }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">{{ asset.criticality }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="mb-4">
+                        <h6 class="text-muted small mb-1">Owner</h6>
+                        <p class="mb-0 fs-6">{{ asset.owner.username|default:"Unassigned" }}</p>
+                    </li>
+                    <li class="mb-4">
+                        <h6 class="text-muted small mb-1">Location</h6>
+                        <p class="mb-0">{{ asset.location|default:"-" }}</p>
+                    </li>
+                    <li class="mb-2">
+                        <h6 class="text-muted small mb-1">Created Date</h6>
+                        <p class="mb-0 text-muted">{{ asset.created_at|date:"M d, Y H:i" }}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

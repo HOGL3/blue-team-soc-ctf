@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ctf_data:/app/database
+    environment:
+      - SECRET_KEY=django-insecure-docker-demo-key-12345
+      - DEBUG=False
+      - ALLOWED_HOSTS=*
+      - DATABASE_URL=sqlite:////app/database/db.sqlite3
+    restart: unless-stopped
+
+volumes:
+  ctf_data:

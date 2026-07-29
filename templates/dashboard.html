@@ -1,0 +1,528 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - BYTE ME Blue Team Portal{% endblock %}
+
+{% block head %}
+<!-- Chart.js CDN for Analytics -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Welcome Section -->
+<div class="row mb-4" role="region" aria-label="Welcome Banner">
+    <div class="col-12">
+        <div class="custom-card card dashboard-hero shadow-sm">
+            <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h2 class="mb-1 h3">Welcome back, {{ request.user.first_name|default:request.user.username }}!</h2>
+                    <p class="mb-0 text-secondary">SOC Operations Dashboard Overview</p>
+                </div>
+                <div class="text-end mt-3 mt-md-0 d-none d-md-block">
+                    {% if user_profile %}
+                        <p class="mb-0 small text-muted text-uppercase fw-bold">Employee ID: <span class="text-primary">{{ user_profile.employee_id|default:"N/A" }}</span></p>
+                        <p class="mb-0 small text-muted text-uppercase fw-bold">Dept: <span class="text-primary">{{ user_profile.department|default:"N/A" }}</span></p>
+                        <p class="mb-0 small text-muted text-uppercase fw-bold">Designation: <span class="text-primary">{{ user_profile.designation|default:"N/A" }}</span></p>
+                    {% else %}
+                        <p class="mb-0 fst-italic text-muted">No profile data available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4" role="region" aria-label="Quick Actions">
+    <div class="col-12">
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{% url 'incident_create' %}" class="btn btn-primary shadow-sm" aria-label="Create Incident"><i class="bi bi-shield-exclamation me-1" aria-hidden="true"></i> Create Incident</a>
+            <a href="{% url 'asset_create' %}" class="btn btn-info text-dark shadow-sm" aria-label="Create Asset"><i class="bi bi-hdd-network me-1" aria-hidden="true"></i> Create Asset</a>
+            <a href="{% url 'report_create' %}" class="btn btn-secondary shadow-sm" aria-label="Create Report"><i class="bi bi-file-earmark-text me-1" aria-hidden="true"></i> Create Report</a>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards (Operational + Insight summaries) -->
+<div class="row g-3 mb-4" role="region" aria-label="Summary Metrics">
+    <div class="col-md-3 col-sm-6">
+        <div class="card metric-card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase fw-bold mb-2 d-flex align-items-center">
+                        <span class="metric-icon me-2"><i class="bi bi-shield-exclamation" aria-hidden="true"></i></span> Incidents
+                    </h6>
+                    <h2 class="mb-0 text-danger">{{ total_incidents }}</h2>
+                </div>
+                <div class="d-flex justify-content-between mt-3 small">
+                    <span class="text-warning fw-semibold">Open: {{ open_incidents }}</span>
+                    <span class="text-success fw-semibold">Closed: {{ closed_incidents }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card metric-card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase fw-bold mb-2 d-flex align-items-center">
+                        <span class="metric-icon me-2"><i class="bi bi-hdd-network" aria-hidden="true"></i></span> Assets
+                    </h6>
+                    <h2 class="mb-0 text-info">{{ total_assets }}</h2>
+                </div>
+                <div class="d-flex justify-content-between mt-3 small">
+                    <span class="text-success fw-semibold">Active: {{ active_assets }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card metric-card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase fw-bold mb-2 d-flex align-items-center">
+                        <span class="metric-icon me-2"><i class="bi bi-file-earmark-text" aria-hidden="true"></i></span> Reports
+                    </h6>
+                    <h2 class="mb-0 text-primary">{{ total_reports }}</h2>
+                </div>
+                <div class="d-flex justify-content-between mt-3 small">
+                    <span class="text-secondary fw-semibold">Drafts: {{ draft_reports }}</span>
+                    <span class="text-info fw-semibold" title="New reports created this month">This Month: {{ reports_this_month }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card metric-card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                    <h6 class="text-muted small text-uppercase fw-bold mb-2 d-flex align-items-center">
+                        <span class="metric-icon me-2"><i class="bi bi-bell" aria-hidden="true"></i></span> Alerts
+                    </h6>
+                    <div class="d-flex align-items-baseline gap-2 mt-1">
+                        <h3 class="mb-0 text-warning">{{ active_notifications }}</h3>
+                        <span class="small text-muted">Unread ({{ total_notifications }} total)</span>
+                    </div>
+                </div>
+                <div class="mt-3 small text-muted lh-sm">
+                    7d Activity: <span class="text-primary fw-semibold">{{ recent_activity_count }} events</span><br>
+                    Top Action: <span class="text-primary fw-semibold" title="{{ most_common_activity_name }}">{{ most_common_activity_name|truncatechars:18 }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ANALYTICS CHARTS SECTION -->
+<div class="row mb-4" role="region" aria-label="Analytics Charts">
+    <!-- Incident Charts -->
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        <div class="custom-card card h-100 shadow-sm">
+            <div class="card-header bg-transparent border-bottom">
+                <h6 class="mb-0 fw-semibold text-light">Incidents by Severity</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="incidentSeverityChart" style="max-height: 250px;" aria-label="Doughnut chart of incidents by severity" role="img"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        <div class="custom-card card h-100 shadow-sm">
+            <div class="card-header bg-transparent border-bottom">
+                <h6 class="mb-0 fw-semibold text-light">Incidents by Status</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="incidentStatusChart" style="max-height: 250px;" aria-label="Bar chart of incidents by status" role="img"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Asset Charts -->
+    <div class="col-lg-4">
+        <div class="custom-card card h-100 shadow-sm">
+            <div class="card-header bg-transparent border-bottom">
+                <h6 class="mb-0 fw-semibold text-light">Assets by Status</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="assetStatusChart" style="max-height: 250px;" aria-label="Pie chart of assets by status" role="img"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" role="region" aria-label="Recent Operational Data">
+    <!-- Left Column: Primary Data (Recent Tables) -->
+    <div class="col-lg-8">
+        <!-- Recent Incidents -->
+        <div class="custom-card card mb-4 shadow-sm">
+            <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-light"><i class="bi bi-shield-exclamation text-danger me-2" aria-hidden="true"></i>Recent Incidents</h5>
+                <a href="{% url 'incidents' %}" class="btn btn-sm btn-outline-secondary" aria-label="View all incidents">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark text-muted small text-uppercase">
+                            <tr>
+                                <th class="ps-3">ID</th>
+                                <th>Title</th>
+                                <th>Severity</th>
+                                <th>Status</th>
+                                <th>Analyst</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for incident in recent_incidents %}
+                            <tr>
+                                <td class="ps-3"><a href="{% url 'incident_detail' incident.incident_id %}" class="text-decoration-none fw-bold text-primary">{{ incident.incident_id }}</a></td>
+                                <td class="text-truncate" style="max-width: 200px;" title="{{ incident.title }}">{{ incident.title }}</td>
+                                <td>
+                                    {% if incident.severity == 'Critical' %}<span class="badge bg-dark border border-danger">Critical</span>
+                                    {% elif incident.severity == 'High' %}<span class="badge bg-danger">High</span>
+                                    {% elif incident.severity == 'Medium' %}<span class="badge bg-warning text-dark">Medium</span>
+                                    {% else %}<span class="badge bg-secondary">Low</span>{% endif %}
+                                </td>
+                                <td>{{ incident.status }}</td>
+                                <td><span class="text-muted"><i class="bi bi-person me-1" aria-hidden="true"></i>{{ incident.assigned_to.username|default:"Unassigned" }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5">
+                                    <div class="text-center py-5">
+                                        <i class="bi bi-shield-check text-muted fs-1 mb-3 d-block" aria-hidden="true"></i>
+                                        <h5 class="text-muted">No recent incidents.</h5>
+                                        <p class="text-muted small">System is secure. You can create a new incident if needed.</p>
+                                        <a href="{% url 'incident_create' %}" class="btn btn-sm btn-outline-primary mt-2">Create Incident</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Assets -->
+        <div class="custom-card card mb-4 shadow-sm">
+            <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-light"><i class="bi bi-hdd-network text-info me-2" aria-hidden="true"></i>Recent Assets</h5>
+                <a href="{% url 'assets' %}" class="btn btn-sm btn-outline-secondary" aria-label="View all assets">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark text-muted small text-uppercase">
+                            <tr>
+                                <th class="ps-3">Name</th>
+                                <th>Hostname</th>
+                                <th>Status</th>
+                                <th>Criticality</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for asset in recent_assets %}
+                            <tr>
+                                <td class="ps-3 text-truncate" style="max-width: 200px;" title="{{ asset.asset_name }}"><a href="{% url 'asset_detail' asset.pk %}" class="text-decoration-none fw-bold text-info">{{ asset.asset_name }}</a></td>
+                                <td class="text-muted">{{ asset.hostname|default:"-" }}</td>
+                                <td>
+                                    {% if asset.status == 'Active' %}<span class="text-success fw-semibold"><i class="bi bi-circle-fill small me-1"></i>Active</span>
+                                    {% elif asset.status == 'Offline' %}<span class="text-danger fw-semibold"><i class="bi bi-circle-fill small me-1"></i>Offline</span>
+                                    {% else %}<span class="text-warning fw-semibold"><i class="bi bi-circle-fill small me-1"></i>{{ asset.status }}</span>{% endif %}
+                                </td>
+                                <td><span class="badge bg-secondary opacity-75">{{ asset.criticality }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4">
+                                    <div class="text-center py-5">
+                                        <i class="bi bi-hdd text-muted fs-1 mb-3 d-block" aria-hidden="true"></i>
+                                        <h5 class="text-muted">No recent assets.</h5>
+                                        <p class="text-muted small">Your asset inventory is currently empty.</p>
+                                        <a href="{% url 'asset_create' %}" class="btn btn-sm btn-outline-info mt-2">Create Asset</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Reports -->
+        <div class="custom-card card mb-4 shadow-sm">
+            <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-light"><i class="bi bi-file-earmark-text text-secondary me-2" aria-hidden="true"></i>Recent Reports</h5>
+                <a href="{% url 'reports' %}" class="btn btn-sm btn-outline-secondary" aria-label="View all reports">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark text-muted small text-uppercase">
+                            <tr>
+                                <th class="ps-3">Title</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Author</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in recent_reports %}
+                            <tr>
+                                <td class="ps-3 text-truncate" style="max-width: 250px;" title="{{ report.title }}"><a href="{% url 'report_detail' report.pk %}" class="text-decoration-none fw-bold text-light">{{ report.title }}</a></td>
+                                <td>{{ report.report_type }}</td>
+                                <td>
+                                    {% if report.report_status == 'Approved' %}<span class="text-success"><i class="bi bi-check-circle me-1"></i>{{ report.report_status }}</span>
+                                    {% else %}<span class="text-muted">{{ report.report_status }}</span>{% endif %}
+                                </td>
+                                <td><span class="text-muted"><i class="bi bi-person me-1" aria-hidden="true"></i>{{ report.author.username }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4">
+                                    <div class="text-center py-5">
+                                        <i class="bi bi-journal-text text-muted fs-1 mb-3 d-block" aria-hidden="true"></i>
+                                        <h5 class="text-muted">No recent reports.</h5>
+                                        <p class="text-muted small">Generate reports to track your metrics.</p>
+                                        <a href="{% url 'report_create' %}" class="btn btn-sm btn-outline-secondary mt-2">Create Report</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <!-- Right Column: Secondary Data (Activity & Notifications) -->
+    <div class="col-lg-4">
+        
+        <!-- Platform Migration Status (Subtle Clue) -->
+        <div class="custom-card card mb-4 border-info border-opacity-50 shadow-sm">
+            <div class="card-header bg-transparent border-bottom">
+                <h6 class="mb-0 text-info"><i class="bi bi-arrow-repeat me-2" aria-hidden="true"></i>Infrastructure Upgrade Status</h6>
+            </div>
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="small text-light fw-bold">Platform Migration</span>
+                    <span class="small text-info fw-bold">85%</span>
+                </div>
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar bg-info" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <p class="mb-0 mt-2 small text-muted lh-sm fst-italic">Pending Legacy Authentication Deprecation. Older management components remain online for compatibility.</p>
+            </div>
+        </div>
+        
+        <!-- Notifications Panel -->
+        <div class="custom-card card mb-4 border-warning border-opacity-50 shadow-sm">
+            <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-warning"><i class="bi bi-bell me-2" aria-hidden="true"></i>Unread Notifications</h5>
+                <a href="{% url 'notifications' %}" class="btn btn-sm btn-outline-warning" aria-label="View all notifications">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush bg-transparent">
+                    {% for notif in recent_notifications_list %}
+                    <li class="list-group-item bg-transparent border-secondary border-opacity-25 px-3 py-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <strong class="text-light">{{ notif.title }}</strong>
+                            <small class="text-muted fst-italic">{{ notif.created_at|timesince }} ago</small>
+                        </div>
+                        <p class="mb-0 small text-light mt-1 lh-sm">{{ notif.message }}</p>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item bg-transparent border-0">
+                        <div class="text-center py-4">
+                            <i class="bi bi-bell-slash text-muted fs-3 mb-2 d-block" aria-hidden="true"></i>
+                            <span class="text-muted small">You're all caught up! No unread notifications.</span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Recent Activity Logs -->
+        <div class="custom-card card mb-4 shadow-sm">
+            <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-success"><i class="bi bi-activity me-2" aria-hidden="true"></i>Recent Activity</h5>
+                <a href="{% url 'activity_logs' %}" class="btn btn-sm btn-outline-success" aria-label="View all activity">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush bg-transparent">
+                    {% for activity in recent_activity %}
+                    <li class="list-group-item bg-transparent border-secondary border-opacity-25 px-3 py-3">
+                        <div class="d-flex align-items-start">
+                            <div class="me-3 mt-1 text-secondary">
+                                <i class="bi bi-person-circle fs-5" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 small lh-sm"><span class="fw-bold text-light">{{ activity.performed_by.username }}</span> {{ activity.action_type }} — {{ activity.description|default:activity.target_object }}</p>
+                                <small class="text-muted fst-italic">{{ activity.timestamp|date:"M d, H:i" }}</small>
+                            </div>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item bg-transparent border-0">
+                        <div class="text-center py-4">
+                            <i class="bi bi-clock text-muted fs-3 mb-2 d-block" aria-hidden="true"></i>
+                            <span class="text-muted small">No recent activity logged in the system.</span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- JSON Script tags for passing data to Chart.js safely -->
+{{ incidents_by_severity|json_script:"incidents_by_severity" }}
+{{ incidents_by_status|json_script:"incidents_by_status" }}
+{{ assets_by_status|json_script:"assets_by_status" }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Helper to safely parse JSON from script tags
+    const getChartData = (id) => JSON.parse(document.getElementById(id).textContent);
+    
+    // Theme colors matching portal UI
+    const colors = {
+        primary: '#375a7f',
+        success: '#00bc8c',
+        info: '#3498DB',
+        warning: '#F39C12',
+        danger: '#E74C3C',
+        secondary: '#adb5bd',
+        dark: '#303030',
+        textMuted: '#ced4da',
+        gridLine: 'rgba(255, 255, 255, 0.1)'
+    };
+    
+    // Common chart options for dark theme
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { color: colors.textMuted, padding: 15, font: { size: 11 } }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                titleFont: { size: 13 },
+                bodyFont: { size: 13 },
+                padding: 10,
+                cornerRadius: 4
+            }
+        }
+    };
+    
+    // 1. Incidents by Severity (Doughnut)
+    const severityDataRaw = getChartData('incidents_by_severity');
+    if (severityDataRaw.length > 0) {
+        const sevLabels = severityDataRaw.map(d => d.severity);
+        const sevData = severityDataRaw.map(d => d.count);
+        const sevColors = sevLabels.map(l => {
+            if(l === 'Critical') return colors.dark;
+            if(l === 'High') return colors.danger;
+            if(l === 'Medium') return colors.warning;
+            return colors.info;
+        });
+        
+        new Chart(document.getElementById('incidentSeverityChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: sevLabels,
+                datasets: [{
+                    data: sevData,
+                    backgroundColor: sevColors,
+                    borderWidth: 1,
+                    borderColor: '#222'
+                }]
+            },
+            options: {
+                ...commonOptions,
+                cutout: '65%'
+            }
+        });
+    } else {
+        // Empty state for chart
+        const ctx = document.getElementById('incidentSeverityChart').getContext('2d');
+        ctx.font = '14px Arial';
+        ctx.fillStyle = colors.textMuted;
+        ctx.textAlign = 'center';
+        ctx.fillText('No incident data available', 150, 125);
+    }
+
+    // 2. Incidents by Status (Bar)
+    const incStatusRaw = getChartData('incidents_by_status');
+    if (incStatusRaw.length > 0) {
+        new Chart(document.getElementById('incidentStatusChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: incStatusRaw.map(d => d.status),
+                datasets: [{
+                    label: 'Incidents',
+                    data: incStatusRaw.map(d => d.count),
+                    backgroundColor: colors.primary,
+                    borderRadius: 4,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { legend: { display: false }, tooltip: { ...commonOptions.plugins.tooltip } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: colors.gridLine }, ticks: { color: colors.textMuted, stepSize: 1, padding: 10 } },
+                    x: { grid: { display: false }, ticks: { color: colors.textMuted, padding: 10 } }
+                }
+            }
+        });
+    } else {
+        const ctx = document.getElementById('incidentStatusChart').getContext('2d');
+        ctx.font = '14px Arial';
+        ctx.fillStyle = colors.textMuted;
+        ctx.textAlign = 'center';
+        ctx.fillText('No incident data available', 150, 125);
+    }
+
+    // 3. Assets by Status (Pie)
+    const assetStatusRaw = getChartData('assets_by_status');
+    if (assetStatusRaw.length > 0) {
+        const assetLabels = assetStatusRaw.map(d => d.status);
+        const assetData = assetStatusRaw.map(d => d.count);
+        const assetColors = assetLabels.map(l => {
+            if(l === 'Active') return colors.success;
+            if(l === 'Offline') return colors.danger;
+            if(l === 'Maintenance') return colors.warning;
+            return colors.secondary;
+        });
+
+        new Chart(document.getElementById('assetStatusChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: assetLabels,
+                datasets: [{
+                    data: assetData,
+                    backgroundColor: assetColors,
+                    borderWidth: 1,
+                    borderColor: '#222'
+                }]
+            },
+            options: commonOptions
+        });
+    } else {
+        const ctx = document.getElementById('assetStatusChart').getContext('2d');
+        ctx.font = '14px Arial';
+        ctx.fillStyle = colors.textMuted;
+        ctx.textAlign = 'center';
+        ctx.fillText('No asset data available', 150, 125);
+    }
+});
+</script>
+{% endblock %}
