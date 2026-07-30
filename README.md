@@ -131,6 +131,13 @@ Copy `.env.example` to `.env` to customize:
 
 ---
 
+## 🎯 Challenge Instructions
+
+Flag format:
+flag{...}
+
+---
+
 ## 🔒 Security Disclaimer
 
 > **⚠️ This application contains one intentional security vulnerability for educational purposes.** Do not deploy on a public-facing server without understanding the risks. See [SECURITY.md](SECURITY.md) for details.

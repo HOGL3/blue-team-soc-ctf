@@ -186,7 +186,7 @@ class LegacyAdminView(APIView):
                 },
                 "MigrationCompletionStatus": "Pending - Network dependencies",
                 "DeprecatedServices": ["v1_auth", "legacy_ftp"],
-                "LegacyMasterToken": "CTF{m1gr4t10n_d3bt_3xp0s3d}",
+                "LegacyMasterToken": "flag{migration_debt_exposed}",
             }
         )
 

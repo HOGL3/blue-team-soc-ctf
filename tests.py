@@ -295,7 +295,7 @@ class SecureAPITests(BaseTestCase):
         for endpoint in endpoints:
             response = self.client.get(endpoint)
             self.assertNotContains(
-                response, "CTF{", msg_prefix=f"Flag leaked in {endpoint}"
+                response, "flag{", msg_prefix=f"Flag leaked in {endpoint}"
             )
 
 
