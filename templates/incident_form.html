@@ -3,8 +3,8 @@
 {% block title %}{% if incident %}Update Incident - {{ incident.incident_id }}{% else %}Create Incident{% endif %}{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>{% if incident %}Update Incident: {{ incident.incident_id }}{% else %}Create Incident{% endif %}</h2>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h1 class="h2 mb-0">{% if incident %}Update Incident: {{ incident.incident_id }}{% else %}Create Incident{% endif %}</h1>
     {% if incident %}
     <a href="{% url 'incident_detail' incident.incident_id %}" class="btn btn-secondary">Cancel</a>
     {% else %}
@@ -12,16 +12,16 @@
     {% endif %}
 </div>
 
-<div class="row">
+<div class="row g-4">
     <div class="col-lg-8">
         <div class="custom-card card">
-            <div class="card-body">
+            <div class="card-body p-4">
                 <form method="post" action="{% if incident %}{% url 'incident_update' incident.incident_id %}{% else %}{% url 'incident_create' %}{% endif %}" novalidate>
                     {% csrf_token %}
-                    
+
                     {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
+                    <div class="alert alert-danger" role="alert">
+                        <ul class="mb-0 ps-3">
                             {% for error in form.non_field_errors %}
                             <li>{{ error }}</li>
                             {% endfor %}
@@ -39,26 +39,26 @@
                         </div>
                         {% endif %}
                         {% if field.help_text %}
-                        <div class="form-text text-secondary">{{ field.help_text }}</div>
+                        <div class="form-text">{{ field.help_text }}</div>
                         {% endif %}
                     </div>
                     {% endfor %}
-                    
+
                     <button type="submit" class="btn btn-primary mt-3">{% if incident %}Save Changes{% else %}Create Incident{% endif %}</button>
                 </form>
             </div>
         </div>
     </div>
-    
+
     <div class="col-lg-4">
-        <div class="custom-card card">
+        <div class="custom-card card h-100">
             <div class="card-header bg-transparent border-bottom">
-                <h5 class="mb-0">Incident Info</h5>
+                <h2 class="h5 mb-0">Incident Info</h2>
             </div>
             <div class="card-body">
                 {% if incident %}
-                <p class="mb-2 text-secondary"><strong>Title:</strong> {{ incident.title }}</p>
-                <p class="mb-2 text-secondary"><strong>Category:</strong> {{ incident.category }}</p>
+                <p class="mb-2 text-secondary"><strong class="text-light">Title:</strong> {{ incident.title }}</p>
+                <p class="mb-2 text-secondary"><strong class="text-light">Category:</strong> {{ incident.category }}</p>
                 {% else %}
                 <p class="mb-0 text-secondary small">Create a new incident and assign it to the right analyst. A timeline event will be added when you update it later.</p>
                 {% endif %}
@@ -67,3 +67,4 @@
     </div>
 </div>
 {% endblock %}
+

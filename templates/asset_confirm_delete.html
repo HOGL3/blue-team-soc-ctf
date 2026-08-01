@@ -7,24 +7,24 @@
     <div class="col-md-6">
         <div class="custom-card card border-danger">
             <div class="card-header bg-danger text-white">
-                <h5 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Asset Deletion</h5>
+                <h1 class="h5 mb-0"><i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>Confirm Asset Deletion</h1>
             </div>
-            <div class="card-body text-center py-5">
-                <h4 class="mb-3">Are you absolutely sure?</h4>
+            <div class="card-body text-center py-5 px-4">
+                <h2 class="h4 mb-3">Are you absolutely sure?</h2>
                 <p class="text-muted mb-4">You are about to permanently delete the following asset from the inventory:</p>
-                
-                <div class="bg-dark p-3 rounded mb-4 text-start">
+
+                <div class="bg-dark p-3 rounded mb-4 text-start border border-secondary border-opacity-25">
                     <p class="mb-1"><strong>Asset Name:</strong> {{ asset.asset_name }}</p>
                     <p class="mb-1"><strong>Hostname:</strong> {{ asset.hostname|default:"-" }}</p>
                     <p class="mb-1"><strong>IP Address:</strong> {{ asset.ip_address|default:"-" }}</p>
                     <p class="mb-0"><strong>Status:</strong> {{ asset.status }}</p>
                 </div>
-                
-                <p class="text-danger small mb-4">This action cannot be undone. Any incident logs tied merely to this string name might lose reference (though database constraints may block if directly linked in later phases).</p>
-                
+
+                <p class="text-danger small mb-4">This action cannot be undone. Any incident logs tied merely to this string name might lose reference, though later-phase constraints may block direct links.</p>
+
                 <form method="post" action="{% url 'asset_delete' asset.pk %}">
                     {% csrf_token %}
-                    <div class="d-flex justify-content-center gap-3">
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
                         <a href="{% url 'asset_detail' asset.pk %}" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-danger">Yes, Delete Asset</button>
                     </div>
@@ -34,3 +34,4 @@
     </div>
 </div>
 {% endblock %}
+

@@ -3,57 +3,51 @@
 {% block title %}Incidents - BYTE ME Blue Team Portal{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <div>
-        <h2 class="mb-1">Incident Management</h2>
+        <h1 class="mb-1 h2">Incident Management</h1>
         <p class="text-secondary mb-0">Track, triage, and prioritize active security incidents.</p>
     </div>
-    <a href="{% url 'incident_create' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Create Incident</a>
+    <a href="{% url 'incident_create' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-1" aria-hidden="true"></i> Create Incident</a>
 </div>
 
-<!-- Search and Filter Bar -->
 <div class="custom-card card mb-4">
-    <div class="card-body p-3">
+    <div class="card-body p-3 p-lg-4">
         <form method="get" action="{% url 'incidents' %}" class="row g-3 align-items-end">
-            <!-- Search -->
-            <div class="col-md-3">
-                <label class="form-label small mb-1">Search</label>
-                <input type="text" name="q" class="form-control" placeholder="Search ID, Title, Desc..." value="{{ search_query }}">
+            <div class="col-md-6 col-xl-3">
+                <label for="incident-search" class="form-label small mb-1">Search</label>
+                <input type="text" id="incident-search" name="q" class="form-control" placeholder="Search ID, title, or description…" value="{{ search_query }}" autocomplete="off">
             </div>
-            <!-- Severity -->
-            <div class="col-md-2">
-                <label class="form-label small mb-1">Severity</label>
-                <select name="severity" class="form-select">
+            <div class="col-sm-6 col-xl-2">
+                <label for="incident-severity" class="form-label small mb-1">Severity</label>
+                <select id="incident-severity" name="severity" class="form-select">
                     <option value="">All</option>
                     {% for val, display in severity_choices %}
                     <option value="{{ val }}" {% if current_severity == val %}selected{% endif %}>{{ display }}</option>
                     {% endfor %}
                 </select>
             </div>
-            <!-- Status -->
-            <div class="col-md-2">
-                <label class="form-label small mb-1">Status</label>
-                <select name="status" class="form-select">
+            <div class="col-sm-6 col-xl-2">
+                <label for="incident-status" class="form-label small mb-1">Status</label>
+                <select id="incident-status" name="status" class="form-select">
                     <option value="">All</option>
                     {% for val, display in status_choices %}
                     <option value="{{ val }}" {% if current_status == val %}selected{% endif %}>{{ display }}</option>
                     {% endfor %}
                 </select>
             </div>
-            <!-- Category -->
-            <div class="col-md-2">
-                <label class="form-label small mb-1">Category</label>
-                <select name="category" class="form-select">
+            <div class="col-sm-6 col-xl-2">
+                <label for="incident-category" class="form-label small mb-1">Category</label>
+                <select id="incident-category" name="category" class="form-select">
                     <option value="">All</option>
                     {% for val, display in category_choices %}
                     <option value="{{ val }}" {% if current_category == val %}selected{% endif %}>{{ display }}</option>
                     {% endfor %}
                 </select>
             </div>
-            <!-- Assigned Analyst -->
-            <div class="col-md-2">
-                <label class="form-label small mb-1">Assigned To</label>
-                <select name="assigned_to" class="form-select">
+            <div class="col-sm-6 col-xl-2">
+                <label for="incident-assigned" class="form-label small mb-1">Assigned To</label>
+                <select id="incident-assigned" name="assigned_to" class="form-select">
                     <option value="">All</option>
                     <option value="unassigned" {% if current_assigned_to == 'unassigned' %}selected{% endif %}>Unassigned</option>
                     {% for analyst in analysts %}
@@ -61,26 +55,23 @@
                     {% endfor %}
                 </select>
             </div>
-            <!-- Actions -->
-            <div class="col-md-1 d-flex">
-                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            <div class="col-xl-1 d-grid">
+                <button type="submit" class="btn btn-primary">Filter</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Sorting Options (Standalone form to preserve filters conceptually or combined) -->
 <div class="d-flex justify-content-end mb-3">
-    <form method="get" action="{% url 'incidents' %}" class="d-flex align-items-center">
-        <!-- Preserve existing GET parameters -->
+    <form method="get" action="{% url 'incidents' %}" class="d-flex align-items-center gap-2 flex-wrap">
         {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
         {% if current_severity %}<input type="hidden" name="severity" value="{{ current_severity }}">{% endif %}
         {% if current_status %}<input type="hidden" name="status" value="{{ current_status }}">{% endif %}
         {% if current_category %}<input type="hidden" name="category" value="{{ current_category }}">{% endif %}
         {% if current_assigned_to %}<input type="hidden" name="assigned_to" value="{{ current_assigned_to }}">{% endif %}
-        
-        <label class="small me-2 text-nowrap text-muted">Sort By:</label>
-        <select name="sort" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+
+        <label for="incident-sort" class="small text-nowrap text-muted">Sort By</label>
+        <select id="incident-sort" name="sort" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
             <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
             <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
             <option value="severity" {% if current_sort == 'severity' %}selected{% endif %}>Severity</option>
@@ -89,27 +80,26 @@
     </form>
 </div>
 
-<!-- Incident List -->
 <div class="custom-card card">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover mb-0 align-middle">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>Severity</th>
-                        <th>Status</th>
-                        <th>Assigned</th>
-                        <th>Created Date</th>
-                        <th>Actions</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Severity</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Assigned</th>
+                        <th scope="col">Created Date</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for incident in incidents %}
                     <tr>
-                        <td><strong><a href="{% url 'incident_detail' incident.incident_id %}" class="text-decoration-none fw-semibold">{{ incident.incident_id }}</a></strong></td>
+                        <td><a href="{% url 'incident_detail' incident.incident_id %}" class="text-decoration-none">{{ incident.incident_id }}</a></td>
                         <td class="fw-semibold">{{ incident.title }}</td>
                         <td>{{ incident.category }}</td>
                         <td>
@@ -139,19 +129,21 @@
                         <td>{{ incident.assigned_to.username|default:"Unassigned" }}</td>
                         <td>{{ incident.created_at|date:"M d, Y H:i" }}</td>
                         <td>
-                            <a href="{% url 'incident_detail' incident.incident_id %}" class="btn btn-sm btn-outline-primary me-1">View</a>
-                            <a href="{% url 'incident_update' incident.incident_id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="{% url 'incident_detail' incident.incident_id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                <a href="{% url 'incident_update' incident.incident_id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
                         <td colspan="8" class="text-center py-5">
                             {% if search_query or current_severity or current_status or current_category or current_assigned_to %}
-                            <h5 class="text-muted">No matches found.</h5>
-                            <p class="mb-0 text-muted">Try adjusting your filters or search query.</p>
+                            <h2 class="h5 text-muted">No matches found.</h2>
+                            <p class="mb-0 text-muted">Try adjusting the filters or search query.</p>
                             <a href="{% url 'incidents' %}" class="btn btn-sm btn-outline-primary mt-3">Clear Filters</a>
                             {% else %}
-                            <h5 class="text-muted">No incidents available.</h5>
+                            <h2 class="h5 text-muted">No incidents available.</h2>
                             {% endif %}
                         </td>
                     </tr>
@@ -162,9 +154,8 @@
     </div>
 </div>
 
-<!-- Pagination -->
 {% if is_paginated %}
-<div class="d-flex justify-content-between align-items-center mt-4">
+<div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">
     <div class="small text-muted">
         Showing Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
     </div>
@@ -177,11 +168,11 @@
             {% else %}
             <li class="page-item disabled"><span class="page-link">Previous</span></li>
             {% endif %}
-            
+
             <li class="page-item active" aria-current="page">
                 <span class="page-link">{{ page_obj.number }}</span>
             </li>
-            
+
             {% if page_obj.has_next %}
             <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode|cut:'page='|cut:page_obj.number }}{% endif %}">Next</a>
@@ -195,3 +186,4 @@
 {% endif %}
 
 {% endblock %}
+

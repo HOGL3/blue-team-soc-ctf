@@ -3,8 +3,8 @@
 {% block title %}Edit Profile - BYTE ME Blue Team Portal{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
-    <h2>Edit Profile</h2>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h1 class="h2 mb-0">Edit Profile</h1>
     <div class="mt-2 mt-md-0">
         <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
     </div>
@@ -14,93 +14,78 @@
     <div class="col-lg-8">
         <div class="custom-card card shadow-sm mb-4">
             <div class="card-body p-4">
-                
                 <form method="post" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
-                    
+
                     {% if u_form.non_field_errors or p_form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
+                    <div class="alert alert-danger" role="alert">
+                        <ul class="mb-0 ps-3">
                             {% for error in u_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
                             {% for error in p_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
                         </ul>
                     </div>
                     {% endif %}
 
-                    <h5 class="text-info border-bottom border-secondary border-opacity-25 pb-2 mb-3">Basic Information</h5>
+                    <h2 class="h5 text-info border-bottom border-secondary border-opacity-25 pb-2 mb-3">Basic Information</h2>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="{{ u_form.first_name.id_for_label }}" class="form-label text-muted small mb-1">{{ u_form.first_name.label }}</label>
+                            <label for="{{ u_form.first_name.id_for_label }}" class="form-label">{{ u_form.first_name.label }}</label>
                             {{ u_form.first_name }}
-                            {% if u_form.first_name.errors %}
-                            <div class="invalid-feedback d-block">{{ u_form.first_name.errors.as_text }}</div>
-                            {% endif %}
+                            {% if u_form.first_name.errors %}<div class="invalid-feedback d-block">{{ u_form.first_name.errors.as_text }}</div>{% endif %}
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="{{ u_form.last_name.id_for_label }}" class="form-label text-muted small mb-1">{{ u_form.last_name.label }}</label>
+                            <label for="{{ u_form.last_name.id_for_label }}" class="form-label">{{ u_form.last_name.label }}</label>
                             {{ u_form.last_name }}
-                            {% if u_form.last_name.errors %}
-                            <div class="invalid-feedback d-block">{{ u_form.last_name.errors.as_text }}</div>
-                            {% endif %}
+                            {% if u_form.last_name.errors %}<div class="invalid-feedback d-block">{{ u_form.last_name.errors.as_text }}</div>{% endif %}
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label for="{{ u_form.email.id_for_label }}" class="form-label text-muted small mb-1">{{ u_form.email.label }}</label>
+                        <label for="{{ u_form.email.id_for_label }}" class="form-label">{{ u_form.email.label }}</label>
                         {{ u_form.email }}
-                        {% if u_form.email.errors %}
-                        <div class="invalid-feedback d-block">{{ u_form.email.errors.as_text }}</div>
-                        {% endif %}
+                        {% if u_form.email.errors %}<div class="invalid-feedback d-block">{{ u_form.email.errors.as_text }}</div>{% endif %}
                     </div>
 
-                    <h5 class="text-info border-bottom border-secondary border-opacity-25 pb-2 mb-3">Contact & Location</h5>
+                    <h2 class="h5 text-info border-bottom border-secondary border-opacity-25 pb-2 mb-3">Contact &amp; Location</h2>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="{{ p_form.phone_number.id_for_label }}" class="form-label text-muted small mb-1">{{ p_form.phone_number.label }}</label>
+                            <label for="{{ p_form.phone_number.id_for_label }}" class="form-label">{{ p_form.phone_number.label }}</label>
                             {{ p_form.phone_number }}
-                            {% if p_form.phone_number.errors %}
-                            <div class="invalid-feedback d-block">{{ p_form.phone_number.errors.as_text }}</div>
-                            {% endif %}
+                            {% if p_form.phone_number.errors %}<div class="invalid-feedback d-block">{{ p_form.phone_number.errors.as_text }}</div>{% endif %}
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="{{ p_form.extension_number.id_for_label }}" class="form-label text-muted small mb-1">{{ p_form.extension_number.label }}</label>
+                            <label for="{{ p_form.extension_number.id_for_label }}" class="form-label">{{ p_form.extension_number.label }}</label>
                             {{ p_form.extension_number }}
-                            {% if p_form.extension_number.errors %}
-                            <div class="invalid-feedback d-block">{{ p_form.extension_number.errors.as_text }}</div>
-                            {% endif %}
+                            {% if p_form.extension_number.errors %}<div class="invalid-feedback d-block">{{ p_form.extension_number.errors.as_text }}</div>{% endif %}
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label for="{{ p_form.office_location.id_for_label }}" class="form-label text-muted small mb-1">{{ p_form.office_location.label }}</label>
+                        <label for="{{ p_form.office_location.id_for_label }}" class="form-label">{{ p_form.office_location.label }}</label>
                         {{ p_form.office_location }}
-                        {% if p_form.office_location.errors %}
-                        <div class="invalid-feedback d-block">{{ p_form.office_location.errors.as_text }}</div>
-                        {% endif %}
+                        {% if p_form.office_location.errors %}<div class="invalid-feedback d-block">{{ p_form.office_location.errors.as_text }}</div>{% endif %}
                     </div>
 
-                    <h5 class="text-warning border-bottom border-secondary border-opacity-25 pb-2 mb-3">Profile Picture</h5>
+                    <h2 class="h5 text-warning border-bottom border-secondary border-opacity-25 pb-2 mb-3">Profile Picture</h2>
                     <div class="mb-4">
-                        <label for="{{ p_form.profile_image.id_for_label }}" class="form-label text-muted small mb-1">{{ p_form.profile_image.label }}</label>
+                        <label for="{{ p_form.profile_image.id_for_label }}" class="form-label">{{ p_form.profile_image.label }}</label>
                         {{ p_form.profile_image }}
-                        {% if p_form.profile_image.errors %}
-                        <div class="invalid-feedback d-block">{{ p_form.profile_image.errors.as_text }}</div>
-                        {% endif %}
-                        <div class="form-text text-muted small mt-1">Allowed formats: JPG, PNG. Maximum size: 2MB.</div>
+                        {% if p_form.profile_image.errors %}<div class="invalid-feedback d-block">{{ p_form.profile_image.errors.as_text }}</div>{% endif %}
+                        <div id="profile-image-help" class="form-text small mt-1">Allowed formats: JPG, PNG. Maximum size: 2MB.</div>
                     </div>
-                    
+
                     <div class="d-grid mt-4">
                         <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
                     </div>
                 </form>
-
             </div>
         </div>
-        
+
         <div class="alert alert-secondary d-flex align-items-center" role="alert">
-            <i class="bi bi-info-circle-fill me-3 fs-4"></i>
+            <i class="bi bi-info-circle-fill me-3 fs-4" aria-hidden="true"></i>
             <div>
-                <strong>Note:</strong> Sensitive fields such as Clearance, Employee ID, and Department can only be modified by a System Administrator.
+                <strong>Note:</strong> Sensitive fields such as clearance, employee ID, and department can only be modified by a System Administrator.
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+

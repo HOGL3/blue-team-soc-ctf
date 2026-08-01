@@ -360,7 +360,7 @@
                                 <i class="bi bi-person-circle fs-5" aria-hidden="true"></i>
                             </div>
                             <div>
-                                <p class="mb-0 small lh-sm"><span class="fw-bold text-light">{{ activity.performed_by.username }}</span> {{ activity.action_type }} — {{ activity.description|default:activity.target_object }}</p>
+                                <p class="mb-0 small lh-sm"><span class="fw-bold text-light">{{ activity.performed_by.username }}</span> {{ activity.action_type }} - {{ activity.description|default:activity.target_object }}</p>
                                 <small class="text-muted fst-italic">{{ activity.timestamp|date:"M d, H:i" }}</small>
                             </div>
                         </div>
@@ -526,3 +526,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+
+

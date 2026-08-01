@@ -3,20 +3,18 @@
 {% block title %}Report Preview - {{ report.title }}{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
-    <h2 class="mb-0">{{ report.title }}</h2>
-    <div class="mt-3 mt-md-0 d-flex gap-2">
-        <!-- Export Group -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h1 class="h2 mb-0">{{ report.title }}</h1>
+    <div class="mt-3 mt-md-0 d-flex gap-2 flex-wrap">
         <div class="btn-group me-2" role="group" aria-label="Export Options">
             <a href="{% url 'report_export_pdf' report.pk %}" class="btn btn-outline-success">
-                <i class="bi bi-file-earmark-pdf me-1"></i> Export PDF
+                <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i> Export PDF
             </a>
             <a href="{% url 'report_export_csv' report.pk %}" class="btn btn-outline-info">
-                <i class="bi bi-filetype-csv me-1"></i> Export CSV
+                <i class="bi bi-filetype-csv me-1" aria-hidden="true"></i> Export CSV
             </a>
         </div>
-        
-        <!-- Action Group -->
+
         <div class="btn-group" role="group" aria-label="Report Actions">
             <a href="{% url 'report_update' report.pk %}" class="btn btn-primary">Edit</a>
             <a href="{% url 'report_delete' report.pk %}" class="btn btn-danger">Delete</a>
@@ -25,31 +23,29 @@
     </div>
 </div>
 
-<div class="row">
-    <!-- Main Report Content -->
+<div class="row g-4">
     <div class="col-lg-8">
         <div class="custom-card card shadow-sm mb-4">
             <div class="card-header bg-transparent border-bottom d-flex align-items-center">
-                <i class="bi bi-file-text fs-4 me-2 text-primary"></i>
-                <h5 class="mb-0">Executive Summary & Description</h5>
+                <i class="bi bi-file-text fs-4 me-2 text-primary" aria-hidden="true"></i>
+                <h2 class="h5 mb-0">Executive Summary &amp; Description</h2>
             </div>
             <div class="card-body p-4">
-                <div class="report-content" style="line-height: 1.8; font-size: 1.05rem; white-space: pre-wrap; color: #ced4da;">{{ report.description }}</div>
+                <div class="report-content" style="line-height: 1.8; font-size: 1.05rem; white-space: pre-wrap;">{{ report.description }}</div>
             </div>
         </div>
     </div>
-    
-    <!-- Sidebar Metadata -->
+
     <div class="col-lg-4">
         <div class="custom-card card shadow-sm mb-4">
             <div class="card-header bg-transparent border-bottom d-flex align-items-center">
-                <i class="bi bi-info-circle fs-4 me-2 text-info"></i>
-                <h5 class="mb-0">Report Metadata</h5>
+                <i class="bi bi-info-circle fs-4 me-2 text-info" aria-hidden="true"></i>
+                <h2 class="h5 mb-0">Report Metadata</h2>
             </div>
             <div class="card-body p-4">
                 <ul class="list-unstyled mb-0">
                     <li class="mb-4 pb-2 border-bottom border-secondary border-opacity-25">
-                        <h6 class="text-muted small text-uppercase fw-bold mb-2">Status</h6>
+                        <h3 class="text-muted small text-uppercase fw-bold mb-2">Status</h3>
                         {% if report.report_status == 'Draft' %}
                             <span class="badge bg-secondary fs-6 rounded-pill px-3">{{ report.report_status }}</span>
                         {% elif report.report_status == 'Submitted' %}
@@ -61,34 +57,34 @@
                         {% endif %}
                     </li>
                     <li class="mb-4 pb-2 border-bottom border-secondary border-opacity-25">
-                        <h6 class="text-muted small text-uppercase fw-bold mb-2">Report Type</h6>
+                        <h3 class="text-muted small text-uppercase fw-bold mb-2">Report Type</h3>
                         <span class="badge bg-dark border border-secondary text-light fs-6 px-3">{{ report.report_type }}</span>
                     </li>
                     <li class="mb-4 pb-2 border-bottom border-secondary border-opacity-25">
-                        <h6 class="text-muted small text-uppercase fw-bold mb-1">Author</h6>
+                        <h3 class="text-muted small text-uppercase fw-bold mb-1">Author</h3>
                         <div class="d-flex align-items-center mt-2">
-                            <i class="bi bi-person-badge fs-5 me-2 text-muted"></i>
+                            <i class="bi bi-person-badge fs-5 me-2 text-muted" aria-hidden="true"></i>
                             <span class="fs-6 fw-semibold">{{ report.author.username }}</span>
                         </div>
                     </li>
                     <li class="mb-4 pb-2 border-bottom border-secondary border-opacity-25">
-                        <h6 class="text-muted small text-uppercase fw-bold mb-2">Linked Incident</h6>
+                        <h3 class="text-muted small text-uppercase fw-bold mb-2">Linked Incident</h3>
                         {% if report.incident %}
-                        <a href="{% url 'incident_detail' report.incident.incident_id %}" class="btn btn-sm btn-outline-info w-100 text-start d-flex align-items-center">
-                            <i class="bi bi-link-45deg fs-5 me-2"></i> 
+                        <a href="{% url 'incident_detail' report.incident.incident_id %}" class="btn btn-sm btn-outline-info w-100 text-start d-flex align-items-center justify-content-start">
+                            <i class="bi bi-link-45deg fs-5 me-2" aria-hidden="true"></i>
                             <span>{{ report.incident.incident_id }}</span>
                         </a>
                         {% else %}
-                        <p class="mb-0 text-muted fst-italic"><i class="bi bi-dash-circle me-1"></i> No incident linked</p>
+                        <p class="mb-0 text-muted fst-italic"><i class="bi bi-dash-circle me-1" aria-hidden="true"></i> No incident linked</p>
                         {% endif %}
                     </li>
                     <li class="mb-3">
-                        <h6 class="text-muted small text-uppercase fw-bold mb-1">Created Date</h6>
-                        <p class="mb-0 text-muted"><i class="bi bi-calendar3 me-1"></i> {{ report.created_at|date:"M d, Y H:i" }}</p>
+                        <h3 class="text-muted small text-uppercase fw-bold mb-1">Created Date</h3>
+                        <p class="mb-0 text-muted"><i class="bi bi-calendar3 me-1" aria-hidden="true"></i> {{ report.created_at|date:"M d, Y H:i" }}</p>
                     </li>
                     <li class="mb-2">
-                        <h6 class="text-muted small text-uppercase fw-bold mb-1">Last Updated</h6>
-                        <p class="mb-0 text-muted"><i class="bi bi-clock-history me-1"></i> {{ report.updated_at|date:"M d, Y H:i" }}</p>
+                        <h3 class="text-muted small text-uppercase fw-bold mb-1">Last Updated</h3>
+                        <p class="mb-0 text-muted"><i class="bi bi-clock-history me-1" aria-hidden="true"></i> {{ report.updated_at|date:"M d, Y H:i" }}</p>
                     </li>
                 </ul>
             </div>
@@ -96,3 +92,4 @@
     </div>
 </div>
 {% endblock %}
+

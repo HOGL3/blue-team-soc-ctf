@@ -3,12 +3,12 @@
 {% block title %}Notification Centre - BYTE ME Blue Team Portal{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
-    <h2><i class="bi bi-bell text-warning me-2"></i>Notification Centre</h2>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h1 class="h2 mb-0"><i class="bi bi-bell text-warning me-2" aria-hidden="true"></i>Notification Centre</h1>
     <div class="mt-2 mt-md-0">
         <form method="post" action="{% url 'notification_mark_all_read' %}" class="d-inline">
             {% csrf_token %}
-            <button type="submit" class="btn btn-outline-success btn-sm"><i class="bi bi-check-all me-1"></i>Mark All Read</button>
+            <button type="submit" class="btn btn-outline-success btn-sm"><i class="bi bi-check-all me-1" aria-hidden="true"></i>Mark All Read</button>
         </form>
     </div>
 </div>
@@ -17,18 +17,18 @@
     <div class="card-body p-0">
         <div class="list-group list-group-flush">
             {% for notification in notifications %}
-            <div class="list-group-item bg-transparent border-secondary border-opacity-25 p-4 {% if not notification.is_read %}bg-dark bg-opacity-50{% endif %}">
-                <div class="d-flex w-100 justify-content-between align-items-start">
-                    <div class="d-flex align-items-start">
+            <div class="list-group-item border-secondary border-opacity-25 p-4 {% if not notification.is_read %}bg-dark bg-opacity-50{% endif %}">
+                <div class="d-flex w-100 justify-content-between align-items-start gap-3 flex-wrap">
+                    <div class="d-flex align-items-start min-w-0">
                         <div class="me-3 mt-1">
                             {% if notification.is_read %}
-                                <i class="bi bi-envelope-open text-muted fs-4"></i>
+                                <i class="bi bi-envelope-open text-muted fs-4" aria-hidden="true"></i>
                             {% else %}
-                                <i class="bi bi-envelope-fill text-warning fs-4"></i>
+                                <i class="bi bi-envelope-fill text-warning fs-4" aria-hidden="true"></i>
                             {% endif %}
                         </div>
-                        <div>
-                            <h5 class="mb-1 {% if not notification.is_read %}fw-bold{% endif %}">{{ notification.title }}</h5>
+                        <div class="min-w-0">
+                            <h2 class="h5 mb-1 {% if not notification.is_read %}fw-bold{% endif %}">{{ notification.title }}</h2>
                             <p class="mb-1 text-muted">{{ notification.message }}</p>
                             <small class="text-secondary">{{ notification.created_at|date:"M d, Y - H:i" }}</small>
                         </div>
@@ -37,21 +37,21 @@
                         {% if notification.is_read %}
                         <form method="post" action="{% url 'notification_update' notification.pk 'unread' %}">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-outline-secondary" title="Mark as unread"><i class="bi bi-envelope-fill"></i></button>
+                            <button type="submit" class="btn btn-sm btn-outline-secondary" aria-label="Mark {{ notification.title }} as unread"><i class="bi bi-envelope-fill" aria-hidden="true"></i></button>
                         </form>
                         {% else %}
                         <form method="post" action="{% url 'notification_update' notification.pk 'read' %}">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-outline-success" title="Mark as read"><i class="bi bi-check2"></i></button>
+                            <button type="submit" class="btn btn-sm btn-outline-success" aria-label="Mark {{ notification.title }} as read"><i class="bi bi-check2" aria-hidden="true"></i></button>
                         </form>
                         {% endif %}
                     </div>
                 </div>
             </div>
             {% empty %}
-            <div class="list-group-item bg-transparent border-0 text-center py-5">
-                <i class="bi bi-bell-slash text-muted fs-1 mb-3 d-block"></i>
-                <h5 class="text-muted">No notifications</h5>
+            <div class="list-group-item border-0 text-center py-5">
+                <i class="bi bi-bell-slash text-muted fs-1 mb-3 d-block" aria-hidden="true"></i>
+                <h2 class="h5 text-muted">No notifications</h2>
                 <p class="text-muted small">You're all caught up!</p>
             </div>
             {% endfor %}
@@ -67,9 +67,9 @@
         {% else %}
         <li class="page-item disabled"><span class="page-link">Previous</span></li>
         {% endif %}
-        
+
         <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
-        
+
         {% if page_obj.has_next %}
         <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
         {% else %}
@@ -79,3 +79,4 @@
 </nav>
 {% endif %}
 {% endblock %}
+
