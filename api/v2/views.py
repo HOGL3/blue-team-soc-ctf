@@ -261,22 +261,59 @@ class HealthAPIView(APIView):
 
 class PlatformStatusAPIView(APIView):
     """
-    Returns current platform status and migration phase information.
-    Used by the dashboard to display the Infrastructure Upgrade Status widget.
-    Read-only. Requires authentication. Contains no sensitive or privileged data.
+    Returns current platform status.
     """
 
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
+        return Response({
+            "status": "operational"
+        })
+
+
+class AdminForbiddenAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
         return Response(
-            {
-                "platform": "BYTE ME SOC – Blue Team Portal",
-                "api_version": "v2",
-                "migration_phase": "Validation Phase",
-                "migration_progress_pct": 85,
-                "compatibility_services_active": True,
-                "operational_status": "nominal",
-                "timestamp": timezone.now().isoformat(),
-            }
+            {"detail": "You do not have permission to perform this action."},
+            status=status.HTTP_403_FORBIDDEN
         )
+
+
+class ProfileSingularAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        profile = getattr(request.user, "profile", None)
+        return Response({
+            "username": request.user.username,
+            "email": request.user.email,
+            "first_name": request.user.first_name,
+            "last_name": request.user.last_name,
+            "role": profile.role if profile else "Employee",
+            "department": profile.department if profile else "",
+            "designation": profile.designation if profile else ""
+        })
+
+
+class NotificationCountAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+        recent_notifications = Notification.objects.filter(user=request.user).order_by("-created_at")[:5]
+        
+        return Response({
+            "unread_count": unread_count,
+            "recent_notifications": [
+                {
+                    "id": n.id,
+                    "title": n.title,
+                    "message": n.message,
+                    "created_at": n.created_at.isoformat(),
+                    "is_read": n.is_read
+                } for n in recent_notifications
+            ]
+        })

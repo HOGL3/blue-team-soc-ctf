@@ -10,9 +10,6 @@ services:
       - ctf_data:/app/database
       - ./src:/app/src:ro
     environment:
-      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
-      DEBUG: ${DEBUG:-False}
-      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
       ALLOW_ALL_HOSTS: ${ALLOW_ALL_HOSTS:-true}
       DATABASE_URL: sqlite:////app/database/db.sqlite3
       PYTHONUNBUFFERED: "1"
@@ -20,7 +17,7 @@ services:
       - ../.env
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5)"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/accounts/login/', timeout=5)"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -119,7 +119,7 @@
 
         <footer>
             <div class="container-fluid">
-                <span class="text-muted">BYTE ME Cyber Defense &copy; 2026 | Platform v2.0 (Validation Phase)</span>
+                <span class="text-muted">BYTE ME Cyber Defense &copy; 2026 | Platform API v2 (Validation Phase)</span>
             </div>
         </footer>
     </div>
@@ -136,7 +136,8 @@
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
         }).catch(() => {});
         apiFetch('/api/v2/status/');
-        apiFetch('/api/v2/notifications/unread/');
+        apiFetch('/api/v2/profile/');
+        apiFetch('/api/v2/notifications/');
     })();
     </script>
     {% endif %}

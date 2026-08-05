@@ -13,6 +13,9 @@ from .views import (
     ReportViewSet,
     SearchAPIView,
     UserProfileViewSet,
+    AdminForbiddenAPIView,
+    ProfileSingularAPIView,
+    NotificationCountAPIView,
 )
 
 router = DefaultRouter()
@@ -24,6 +27,9 @@ router.register(r"notifications", NotificationViewSet, basename="notification")
 router.register(r"activity-logs", ActivityLogViewSet, basename="activitylog")
 
 urlpatterns = [
+    path("profile/", ProfileSingularAPIView.as_view(), name="profile-api-singular"),
+    path("notifications/", NotificationCountAPIView.as_view(), name="notifications-count-api"),
+    path("admin/", AdminForbiddenAPIView.as_view(), name="admin-forbidden-api"),
     path("", include(router.urls)),
     path("dashboard/", DashboardAPIView.as_view(), name="dashboard-api"),
     path("search/", SearchAPIView.as_view(), name="search-api"),
