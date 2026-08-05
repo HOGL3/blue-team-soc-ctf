@@ -180,3 +180,21 @@ def dashboard_view(request):
     }
 
     return render(request, "dashboard.html", context)
+
+
+@login_required
+def release_notes_view(request):
+    """
+    Platform release notes / changelog page.
+    Strengthens the migration narrative for the SOC portal.
+    """
+    return render(request, "release_notes.html", {})
+
+
+@login_required
+def help_view(request):
+    """
+    Help and support page.
+    Provides enterprise-realistic SOC platform documentation.
+    """
+    return render(request, "help.html", {})

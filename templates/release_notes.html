@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Release Notes – BYTE ME Blue Team Portal{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="custom-card card shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-journal-code text-info fs-3 me-3" aria-hidden="true"></i>
+                    <div>
+                        <h1 class="h3 mb-0 text-light">Platform Release Notes</h1>
+                        <p class="mb-0 text-muted small">Apex Global Solutions – Internal Engineering Document</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- v2.0 Release -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="custom-card card shadow-sm border-info border-opacity-25">
+            <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="h5 mb-0 text-info fw-bold">
+                        <i class="bi bi-tag me-2" aria-hidden="true"></i>Version 2.0 — Platform Modernization
+                    </h2>
+                </div>
+                <span class="badge bg-info text-dark">Current</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small mb-3">
+                    <i class="bi bi-calendar me-1" aria-hidden="true"></i>
+                    Released: Q2 2026 &nbsp;|&nbsp; Change Request: CHG-2026-047
+                </p>
+
+                <h3 class="h6 text-light fw-bold mb-2"><i class="bi bi-check2-circle text-success me-2" aria-hidden="true"></i>Changes</h3>
+                <ul class="list-unstyled text-muted small mb-4 ps-3">
+                    <li class="mb-2"><i class="bi bi-dot text-info" aria-hidden="true"></i> Platform API upgraded to v2. All internal SOC tooling now integrated with the current Platform API.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-info" aria-hidden="true"></i> Dashboard modernization: redesigned Operations Centre with real-time analytics.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-info" aria-hidden="true"></i> Session authentication improvements and role-based access control enhancements.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-info" aria-hidden="true"></i> Infrastructure services migrated to current platform standard.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-info" aria-hidden="true"></i> Performance improvements across Incident, Asset, and Report management modules.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-info" aria-hidden="true"></i> Notifications subsystem redesigned for lower latency.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-info" aria-hidden="true"></i> Audit logging expanded to cover all data-modifying operations.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-info" aria-hidden="true"></i> Technology refresh: underlying infrastructure components upgraded per Q2 2026 roadmap.</li>
+                </ul>
+
+                <h3 class="h6 text-light fw-bold mb-2"><i class="bi bi-exclamation-triangle text-warning me-2" aria-hidden="true"></i>Known Operational Notes</h3>
+                <ul class="list-unstyled text-muted small mb-0 ps-3">
+                    <li class="mb-2"><i class="bi bi-dot text-warning" aria-hidden="true"></i> Compatibility services remain active during the validation window. Retirement scheduled post engineering sign-off.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-warning" aria-hidden="true"></i> Legacy integrations remain operational until migration validation is formally closed. Rollback support is available if required.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-warning" aria-hidden="true"></i> The SOC has been requested to monitor for unusual access patterns on older management interfaces until the compatibility window closes.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-warning" aria-hidden="true"></i> Platform Upgrade Programme is currently at 85% completion. Identity Platform component is pending final approval.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- v1.5 Release -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="custom-card card shadow-sm">
+            <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="h5 mb-0 text-light fw-bold">
+                        <i class="bi bi-tag me-2" aria-hidden="true"></i>Version 1.5 — Incident Management Improvements
+                    </h2>
+                </div>
+                <span class="badge bg-secondary">Previous</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small mb-3">
+                    <i class="bi bi-calendar me-1" aria-hidden="true"></i>
+                    Released: Q4 2025 &nbsp;|&nbsp; Change Request: CHG-2025-183
+                </p>
+                <ul class="list-unstyled text-muted small mb-0 ps-3">
+                    <li class="mb-2"><i class="bi bi-dot text-secondary" aria-hidden="true"></i> Incident timeline view introduced for chronological event tracking.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-secondary" aria-hidden="true"></i> SIEM alert correlation improvements.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-secondary" aria-hidden="true"></i> Report export functionality added.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-secondary" aria-hidden="true"></i> Role definitions expanded to include Read-Only Analyst tier.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-secondary" aria-hidden="true"></i> General stability and performance improvements.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- v1.0 Release -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="custom-card card shadow-sm">
+            <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="h5 mb-0 text-light fw-bold">
+                        <i class="bi bi-tag me-2" aria-hidden="true"></i>Version 1.0 — Initial Platform Launch
+                    </h2>
+                </div>
+                <span class="badge bg-secondary">Archive</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small mb-3">
+                    <i class="bi bi-calendar me-1" aria-hidden="true"></i>
+                    Released: Q1 2025 &nbsp;|&nbsp; Change Request: CHG-2025-001
+                </p>
+                <ul class="list-unstyled text-muted small mb-0 ps-3">
+                    <li class="mb-2"><i class="bi bi-dot text-secondary" aria-hidden="true"></i> Initial deployment of the Apex Global Solutions Blue Team Portal.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-secondary" aria-hidden="true"></i> Core SOC functionality: incident management, asset inventory, report generation.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-secondary" aria-hidden="true"></i> Platform API (v1) introduced for internal integrations.</li>
+                    <li class="mb-2"><i class="bi bi-dot text-secondary" aria-hidden="true"></i> Notification and audit logging subsystems deployed.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="text-muted small text-center pb-2">
+            <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+            For questions regarding this release or the current migration status, contact <strong>platform-engineering@apexglobal.local</strong> or raise a Change Request via the SOC helpdesk.
+        </div>
+    </div>
+</div>
+{% endblock %}

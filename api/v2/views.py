@@ -257,3 +257,26 @@ class HealthAPIView(APIView):
                 "timestamp": timezone.now().isoformat(),
             }
         )
+
+
+class PlatformStatusAPIView(APIView):
+    """
+    Returns current platform status and migration phase information.
+    Used by the dashboard to display the Infrastructure Upgrade Status widget.
+    Read-only. Requires authentication. Contains no sensitive or privileged data.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        return Response(
+            {
+                "platform": "BYTE ME SOC – Blue Team Portal",
+                "api_version": "v2",
+                "migration_phase": "Validation Phase",
+                "migration_progress_pct": 85,
+                "compatibility_services_active": True,
+                "operational_status": "nominal",
+                "timestamp": timezone.now().isoformat(),
+            }
+        )

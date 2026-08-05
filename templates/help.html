@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Help & Support – BYTE ME Blue Team Portal{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="custom-card card shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-question-circle text-primary fs-3 me-3" aria-hidden="true"></i>
+                    <div>
+                        <h1 class="h3 mb-0 text-light">Help &amp; Support</h1>
+                        <p class="mb-0 text-muted small">Apex Global Solutions – SOC Platform Documentation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Quick Start -->
+    <div class="col-md-6">
+        <div class="custom-card card h-100 shadow-sm">
+            <div class="card-header bg-transparent border-bottom">
+                <h2 class="h6 mb-0 text-light fw-bold"><i class="bi bi-lightning-charge text-warning me-2" aria-hidden="true"></i>Quick Start</h2>
+            </div>
+            <div class="card-body text-muted small">
+                <ul class="list-unstyled mb-0 ps-2">
+                    <li class="mb-3">
+                        <strong class="text-light d-block mb-1">Logging In</strong>
+                        Use your Apex Global employee credentials. Contact your SOC manager if you are locked out.
+                    </li>
+                    <li class="mb-3">
+                        <strong class="text-light d-block mb-1">Dashboard</strong>
+                        The dashboard provides a real-time overview of active incidents, asset status, and unread notifications. Live data is retrieved from the Platform API v2.
+                    </li>
+                    <li class="mb-3">
+                        <strong class="text-light d-block mb-1">Creating an Incident</strong>
+                        Navigate to Incidents → Create Incident. Assign a severity, category, and analyst before saving.
+                    </li>
+                    <li class="mb-0">
+                        <strong class="text-light d-block mb-1">Generating Reports</strong>
+                        Navigate to Reports → Create Report. Link the report to an incident where applicable.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Info -->
+    <div class="col-md-6">
+        <div class="custom-card card h-100 shadow-sm">
+            <div class="card-header bg-transparent border-bottom">
+                <h2 class="h6 mb-0 text-light fw-bold"><i class="bi bi-server text-info me-2" aria-hidden="true"></i>Platform Information</h2>
+            </div>
+            <div class="card-body text-muted small">
+                <ul class="list-unstyled mb-0 ps-2">
+                    <li class="mb-3">
+                        <strong class="text-light d-block mb-1">Current Platform Version</strong>
+                        Platform API v2.0 — Infrastructure Modernization (Validation Phase)
+                    </li>
+                    <li class="mb-3">
+                        <strong class="text-light d-block mb-1">Migration Status</strong>
+                        Platform modernization is 85% complete. Compatibility services remain active during the validation window. See <a href="{% url 'release_notes' %}" class="text-info">Release Notes</a> for details.
+                    </li>
+                    <li class="mb-3">
+                        <strong class="text-light d-block mb-1">API Documentation</strong>
+                        The Platform API v2 schema is available to authenticated users at <code class="text-info">/api/v2/docs/</code>.
+                    </li>
+                    <li class="mb-0">
+                        <strong class="text-light d-block mb-1">Supported Browsers</strong>
+                        Chrome 120+, Firefox 121+, Edge 120+. Internet Explorer is not supported.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Roles -->
+    <div class="col-md-6">
+        <div class="custom-card card h-100 shadow-sm">
+            <div class="card-header bg-transparent border-bottom">
+                <h2 class="h6 mb-0 text-light fw-bold"><i class="bi bi-shield-lock text-success me-2" aria-hidden="true"></i>User Roles</h2>
+            </div>
+            <div class="card-body text-muted small">
+                <table class="table table-sm table-dark mb-0" style="font-size: 0.8rem;">
+                    <thead><tr><th>Role</th><th>Permissions</th></tr></thead>
+                    <tbody>
+                        <tr><td class="text-warning">SOC Manager</td><td>Full read/write access to all modules</td></tr>
+                        <tr><td class="text-info">SOC Analyst</td><td>Create and update assigned incidents; read assets and reports</td></tr>
+                        <tr><td class="text-secondary">Read-Only Analyst</td><td>Read access to incidents, assets, and reports only</td></tr>
+                        <tr><td class="text-danger">Administrator</td><td>Full platform access including user management</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="col-md-6">
+        <div class="custom-card card h-100 shadow-sm">
+            <div class="card-header bg-transparent border-bottom">
+                <h2 class="h6 mb-0 text-light fw-bold"><i class="bi bi-envelope text-secondary me-2" aria-hidden="true"></i>Support Contacts</h2>
+            </div>
+            <div class="card-body text-muted small">
+                <ul class="list-unstyled mb-0 ps-2">
+                    <li class="mb-3">
+                        <strong class="text-light d-block mb-1">SOC Helpdesk</strong>
+                        <code>soc-helpdesk@apexglobal.local</code> — ext. x300
+                    </li>
+                    <li class="mb-3">
+                        <strong class="text-light d-block mb-1">Platform Engineering</strong>
+                        <code>platform-engineering@apexglobal.local</code> — for API and infrastructure issues
+                    </li>
+                    <li class="mb-3">
+                        <strong class="text-light d-block mb-1">IT Infrastructure</strong>
+                        <code>it-infra@apexglobal.local</code> — for asset and network issues
+                    </li>
+                    <li class="mb-0">
+                        <strong class="text-light d-block mb-1">After-Hours Escalation</strong>
+                        SOC On-Call: <code>+1-555-0100</code> (24/7)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

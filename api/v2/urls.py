@@ -9,6 +9,7 @@ from .views import (
     HealthAPIView,
     IncidentViewSet,
     NotificationViewSet,
+    PlatformStatusAPIView,
     ReportViewSet,
     SearchAPIView,
     UserProfileViewSet,
@@ -27,6 +28,8 @@ urlpatterns = [
     path("dashboard/", DashboardAPIView.as_view(), name="dashboard-api"),
     path("search/", SearchAPIView.as_view(), name="search-api"),
     path("health/", HealthAPIView.as_view(), name="health-api"),
+    path("status/", PlatformStatusAPIView.as_view(), name="status-api"),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
 ]
+

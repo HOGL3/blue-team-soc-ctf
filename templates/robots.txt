@@ -1,0 +1,20 @@
+# robots.txt - Apex Global Solutions Internal Platform
+# Platform API v2 — Operational Readiness: Validation Phase
+#
+# Contact: platform-engineering@apexglobal.local
+# Last reviewed: 2026-Q3 Infrastructure Refresh
+
+User-agent: *
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /api/
+Disallow: /activity/
+Disallow: /profile/
+Disallow: /search/
+Disallow: /media/
+
+# Allow public-facing documentation
+Allow: /help/
+Allow: /release-notes/
+
+Crawl-delay: 10

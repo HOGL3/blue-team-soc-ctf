@@ -51,6 +51,16 @@
                 </a>
             </li>
             <li>
+                <a href="{% url 'release_notes_root' %}" class="{% if 'release_notes' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="bi bi-journal-code" aria-hidden="true"></i> Release Notes
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'help_root' %}" class="{% if 'help' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="bi bi-question-circle" aria-hidden="true"></i> Help
+                </a>
+            </li>
+            <li>
                 <form id="logout-form" action="{% url 'logout' %}" method="post" class="sidebar-form">
                     {% csrf_token %}
                     <button type="submit" class="sidebar-button">
@@ -116,6 +126,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    {% if user.is_authenticated %}
+    <script>
+    // Platform API v2 — background status polling for dashboard widgets
+    (function () {
+        const apiFetch = (url) => fetch(url, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+        }).catch(() => {});
+        apiFetch('/api/v2/status/');
+        apiFetch('/api/v2/notifications/unread/');
+    })();
+    </script>
+    {% endif %}
 </body>
 </html>
 
