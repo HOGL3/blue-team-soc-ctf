@@ -324,6 +324,16 @@ class Command(BaseCommand):
                 "source": "User Report",
                 "days_ago": 5,
             },
+            {
+                "title": "Platform API Cutover \u2013 Validation Monitoring",
+                "desc": "As part of the platform modernization programme, Engineering has completed the migration of internal SOC tooling to the current Platform API (v2). During the validation period, a limited number of compatibility services remain operational to support rollback procedures and legacy integrations if required. The SOC has been requested to monitor for unexpected or unusual access patterns involving older management interfaces until the compatibility window is formally closed. No active security incident has been confirmed at this time. Investigation is precautionary. Related Change Request: CHG-2026-047 – Platform API Modernization.",
+                "cat": IncidentCategory.SUSPICIOUS_LOGIN,
+                "sev": IncidentSeverity.MEDIUM,
+                "status": IncidentStatus.OPEN,
+                "analyst": "mchen",
+                "source": "Change Management / Platform Engineering",
+                "days_ago": 1,
+            },
         ]
 
         created_incidents = {}
