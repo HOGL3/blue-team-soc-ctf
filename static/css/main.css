@@ -374,8 +374,6 @@ input:focus {
     background-color: var(--bg-table-body);
     color: var(--text-body);
     border-color: var(--border-table);
-    border-collapse: separate;
-    border-spacing: 0;
     margin-bottom: 0;
 }
 
@@ -393,7 +391,6 @@ input:focus {
     background-color: var(--bg-table-body) !important;
     border-color: var(--border-table);
     vertical-align: middle;
-    padding: 0.95rem 1rem;
 }
 
 .table thead th,
@@ -402,9 +399,6 @@ input:focus {
     background-color: var(--bg-table-header) !important;
     color: var(--text-primary) !important;
     border-color: var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 2;
     font-size: 0.82rem;
     font-weight: 700;
     text-transform: uppercase;

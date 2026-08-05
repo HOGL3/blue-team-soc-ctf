@@ -1,0 +1,38 @@
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: container/Dockerfile
+    container_name: blue_team_portal
+    ports:
+      - "8004:8000"
+    volumes:
+      - ctf_data:/app/database
+      - ./src:/app/src:ro
+    environment:
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
+      DEBUG: ${DEBUG:-False}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      ALLOW_ALL_HOSTS: ${ALLOW_ALL_HOSTS:-true}
+      DATABASE_URL: sqlite:////app/database/db.sqlite3
+      PYTHONUNBUFFERED: "1"
+    env_file:
+      - ../.env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - app_network
+    depends_on: []
+
+volumes:
+  ctf_data:
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge
